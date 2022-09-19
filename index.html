@@ -11,12 +11,17 @@
   <body>
     <div class="container">
       <div class="thumbnail-container">
-          <img src="/assets/poster.jpg" alt="" class="thumbnail" />
+            <img src="/assets/poster.jpg" alt="" class="thumbnail" />
+
       </div>
     </div>
 
     <div class="modal-bg">
       <div class="modal">
+        <div class="playback-animation" id="playback-animation">
+                <img src="/assets/play-button.png" alt="" class="hide">
+                <img src="/assets/pause.png" alt="">
+          </div>
             <div class="modal-header">
                 <h2 class="modal-title">Modal</h2>
                 <span class="close">✖</span>
@@ -42,7 +47,7 @@
                             </button>
               
                           <div class="volume-controls">
-                            <button data-title="Mute (m)" class="volume-btn">
+                            <button data-title="Mute (m)" class="volume-btn" id="volume-button">
                                 <img src="/assets/volume-up.png" alt="" class="volume-up">
                                 <img src="/assets/volume-low.png" alt="" class="volume-low hide">
                                 <img src="/assets/volume-mute.png" alt="" class="volume-mute hide">

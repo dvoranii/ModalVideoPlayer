@@ -8,14 +8,29 @@ const videoControls = document.getElementById("video-controls");
 const playBackBtnContainer = document.querySelector("#play-btn");
 const playbackBtns = document.querySelectorAll("#play-btn img");
 const playBtn = document.querySelector(".play");
-// const pauseBtn = document.querySelector(".pause");
+const playBackIcons = document.querySelectorAll(".playback-animation img");
 
 const pipBtn = document.querySelector(".pip-btn");
-// const fullscreenOpen = document.querySelector(".fullscreen");
-// const fullscreenExitBtn = document.querySelector(".fullscreen-exit");
 const fullScreenBtn = document.querySelector(".fullscreen-btn");
 const fullScreenIcons = document.querySelectorAll(".fullscreen-btn img");
 const videoContainer = document.querySelector(".video-container");
+
+const seek = document.querySelector(".seek");
+const seekTooltip = document.querySelector(".seek-tooltip");
+
+const progressBar = document.querySelector("#progress-bar");
+const duration = document.getElementById("duration");
+
+// volume controls
+const volumeButton = document.getElementById("volume-button");
+const volumeIcons = document.querySelectorAll(".volume-button use");
+const volumeMute = document.querySelector(".volume-mute");
+const volumeLow = document.querySelector(".volume-low");
+const volumeHigh = document.querySelector(".volume-up");
+const volume = document.getElementById("volume");
+
+const playbackAnimation = document.getElementById("playback-animation");
+const timeElapsed = document.getElementById("time-elapsed");
 
 const videoWorks = !!document.createElement("video").canPlayType;
 if (videoWorks) {
@@ -30,7 +45,7 @@ function openModal() {
 thumbnail.addEventListener("click", function (e) {
   e.preventDefault();
   modalBg.classList.remove("hide");
-  setInterval(openModal, 50);
+  setInterval(openModal, 75);
   video.play();
   console.log(video.currentTime);
 });
@@ -100,3 +115,105 @@ function formatTime(seconds) {
     seconds: result.substr(6, 2),
   };
 }
+
+function initializeVideo() {
+  const videoDuration = Math.round(video.duration);
+  seek.setAttribute("max", videoDuration);
+  progressBar.setAttribute("max", videoDuration);
+  const time = formatTime(videoDuration);
+  duration.innerText = `${time.minutes}:${time.seconds}`;
+  duration.setAttribute("datetime", `${time.minutes}m ${time.seconds}`);
+}
+
+video.addEventListener("loadedmetadata", initializeVideo);
+
+function updateTimeElapsed() {
+  const time = formatTime(Math.round(video.currentTime));
+  timeElapsed.innerText = `${time.minutes}:${time.seconds}`;
+  timeElapsed.setAttribute("datetime", `${time.minutes}m ${time.seconds}s`);
+}
+video.addEventListener("timeupdate", updateTimeElapsed);
+
+function updateProgress() {
+  seek.value = Math.floor(video.currentTime);
+  progressBar.value = Math.floor(video.currentTime);
+}
+video.addEventListener("timeupdate", updateProgress);
+
+function updateSeekTooltip(e) {
+  const skipTo = Math.round(
+    (e.offsetX / e.target.clientWidth) *
+      parseInt(e.target.getAttribute("max"), 10)
+  );
+  seek.setAttribute("data-seek", skipTo);
+  const t = formatTime(skipTo);
+  seekTooltip.textContent = `${t.minutes}:${t.seconds}`;
+  const rect = video.getBoundingClientRect();
+  seekTooltip.style.left = `${e.pageX - rect.left}px`;
+}
+
+seek.addEventListener("mousemove", updateSeekTooltip);
+
+function skipAhead(e) {
+  const skipTo = e.target.dataset.seek ? e.target.dataset.seek : e.target.value;
+  video.currentTime = skipTo;
+  progressBar.value = skipTo;
+  seek.value = skipTo;
+}
+seek.addEventListener("input", skipAhead);
+
+function updateVolume() {
+  if (video.muted) {
+    video.muted = false;
+  }
+
+  video.volume = volume.value;
+}
+
+volume.addEventListener("input", updateVolume);
+
+function updateVolumeIcon() {
+  volumeIcons.forEach((icon) => {
+    icon.classList.add("hidden");
+  });
+
+  volumeButton.setAttribute("data-title", "Mute (m)");
+
+  if (video.muted || video.volume === 0) {
+    volumeMute.classList.remove("hide");
+    volumeHigh.classList.add("hide");
+    volumeLow.classList.add("hide");
+    volumeButton.setAttribute("data-title", "Unmute (m)");
+  } else if (video.volume > 0 && video.volume <= 0.5) {
+    volumeLow.classList.remove("hide");
+    volumeMute.classList.add("hide");
+    volumeHigh.classList.add("hide");
+  } else {
+    volumeHigh.classList.remove("hide");
+    volumeLow.classList.add("hide");
+    volumeMute.classList.add("hide");
+  }
+}
+
+video.addEventListener("volumechange", updateVolumeIcon);
+
+function animatePlayback() {
+  playBackIcons.forEach((icon) => icon.classList.toggle("hide"));
+  playbackAnimation.animate(
+    [
+      {
+        opacity: 1,
+        transform: "scale(1)",
+      },
+      {
+        opacity: 0,
+        transform: "scale(1.3)",
+      },
+    ],
+    {
+      duration: 500,
+    }
+  );
+}
+
+video.addEventListener("click", animatePlayback);
