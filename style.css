@@ -106,7 +106,7 @@ html {
     rgba(0, 0, 0, 0.5)
   );
 
-  height: 70px;
+  height: 100px;
 }
 
 .video-progress {
@@ -149,6 +149,11 @@ progress::-moz-progress-bar {
 
 .left-controls {
   display: flex;
+}
+
+.bottom-controls {
+  display: flex;
+  justify-content: space-between;
 }
 
 .seek {

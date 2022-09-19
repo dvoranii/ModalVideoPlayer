@@ -8,7 +8,14 @@ const videoControls = document.getElementById("video-controls");
 const playBackBtnContainer = document.querySelector("#play-btn");
 const playbackBtns = document.querySelectorAll("#play-btn img");
 const playBtn = document.querySelector(".play");
-const pauseBtn = document.querySelector(".pause");
+// const pauseBtn = document.querySelector(".pause");
+
+const pipBtn = document.querySelector(".pip-btn");
+// const fullscreenOpen = document.querySelector(".fullscreen");
+// const fullscreenExitBtn = document.querySelector(".fullscreen-exit");
+const fullScreenBtn = document.querySelector(".fullscreen-btn");
+const fullScreenIcons = document.querySelectorAll(".fullscreen-btn img");
+const videoContainer = document.querySelector(".video-container");
 
 const videoWorks = !!document.createElement("video").canPlayType;
 if (videoWorks) {
@@ -54,4 +61,32 @@ video.addEventListener("click", updatePlayBtn);
 playBackBtnContainer.addEventListener("click", function () {
   updatePlayBtn();
   togglePlay();
+});
+
+function toggleFullScreen() {
+  if (document.fullscreenElement) {
+    document.exitFullscreen();
+  } else if (document.webkitFullscreenElement) {
+    // Need this to support Safari
+    document.webkitExitFullscreen();
+  } else if (videoContainer.webkitRequestFullscreen) {
+    // Need this to support Safari
+    videoContainer.webkitRequestFullscreen();
+  } else {
+    videoContainer.requestFullscreen();
+  }
+}
+
+function updateFullScreenBtn() {
+  fullScreenIcons.forEach((icon) => icon.classList.toggle("hide"));
+  if (document.fullscreenElement) {
+    fullScreenBtn.setAttribute("data-title", "Exit full screen (f)");
+  } else {
+    fullScreenBtn.setAttribute("data-title", "Full screen (f)");
+  }
+}
+
+fullScreenBtn.addEventListener("click", function () {
+  toggleFullScreen();
+  updateFullScreenBtn();
 });
