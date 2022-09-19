@@ -90,3 +90,13 @@ fullScreenBtn.addEventListener("click", function () {
   toggleFullScreen();
   updateFullScreenBtn();
 });
+
+// look into refactoring this
+function formatTime(seconds) {
+  const result = new Date(seconds * 1000).toISOString().substr(11, 8);
+
+  return {
+    minutes: result.substr(3, 2),
+    seconds: result.substr(6, 2),
+  };
+}
